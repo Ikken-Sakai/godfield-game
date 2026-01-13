@@ -33,9 +33,7 @@ class Game {
             player: {
                 name: 'あなた',
                 hp: 40,
-                maxHp: 40,
                 mp: 10,
-                maxMp: 10,
                 money: 100,
                 hand: [],
                 equipment: { weapon: null, armor: null },
@@ -45,9 +43,7 @@ class Game {
             opponent: {
                 name: 'CPU',
                 hp: 40,
-                maxHp: 40,
                 mp: 10,
-                maxMp: 10,
                 money: 100,
                 hand: [],
                 equipment: { weapon: null, armor: null },
@@ -453,6 +449,49 @@ class Game {
             return { success: true, message };
         }
 
+        if (card.special === 'buy') {
+            // 買い物カード：相手のランダムなカードを購入
+            const target = user === 'player' ? 'opponent' : 'player';
+            const targetHand = this.state[target].hand;
+            if (targetHand.length > 0) {
+                const buyIndex = Math.floor(Math.random() * targetHand.length);
+                const targetCard = targetHand[buyIndex];
+                const price = targetCard.price || 50;
+                
+                // 購入処理はUI側で確認モーダルを表示
+                this.state.pendingPurchase = {
+                    card: targetCard,
+                    index: buyIndex,
+                    price: price,
+                    buyer: user,
+                    seller: target
+                };
+                
+                return { success: true, needPurchaseConfirm: true, card: targetCard, price: price };
+            } else {
+                message = `${card.name}！しかし相手はカードを持っていない。`;
+                this.addLog(message);
+                return { success: true, message };
+            }
+        }
+
+        if (card.special === 'sell') {
+            // 売りつけカード：自分のカードを相手に売る
+            if (userData.hand.length > 1) {
+                // 売るカード選択はUI側で処理
+                this.state.pendingSale = {
+                    seller: user,
+                    buyer: user === 'player' ? 'opponent' : 'player'
+                };
+                
+                return { success: true, needSellSelect: true };
+            } else {
+                message = `${card.name}！しかし売るカードがない。`;
+                this.addLog(message);
+                return { success: true, message };
+            }
+        }
+
         if (card.special === 'steal') {
             const target = user === 'player' ? 'opponent' : 'player';
             const targetHand = this.state[target].hand;
@@ -500,9 +539,9 @@ class Game {
         this.isPlayerTurn = !this.isPlayerTurn;
         this.state.currentPlayer = this.isPlayerTurn ? 'player' : 'opponent';
         
-        // ターン開始時にMP回復（2ポイント）
+        // ターン開始時にMP回復（2ポイント）※上限なし
         const currentPlayerData = this.state[this.state.currentPlayer];
-        currentPlayerData.mp = Math.min(currentPlayerData.mp + 2, currentPlayerData.maxMp);
+        currentPlayerData.mp += 2;
         
         this.addLog(`--- ターン ${this.state.turn} ---`);
         this.addLog(`${this.isPlayerTurn ? 'あなた' : 'CPU'}のターン`);
@@ -674,6 +713,78 @@ class Game {
         }
         
         return false;
+    }
+
+    /**
+     * 購入を確定
+     */
+    confirmPurchase(accept) {
+        if (!this.state.pendingPurchase) return { success: false };
+        
+        const { card, index, price, buyer, seller } = this.state.pendingPurchase;
+        
+        if (accept) {
+            // 購入者のお金チェック
+            if (this.state[buyer].money >= price) {
+                // お金を移動
+                this.state[buyer].money -= price;
+                this.state[seller].money += price;
+                
+                // カードを移動
+                const targetCard = this.state[seller].hand.splice(index, 1)[0];
+                this.state[buyer].hand.push(targetCard);
+                
+                this.addLog(`${card.name}を${price}円で購入した！`);
+                this.state.pendingPurchase = null;
+                return { success: true, purchased: true };
+            } else {
+                this.addLog(`お金が足りない！（必要：${price}円）`);
+                this.state.pendingPurchase = null;
+                return { success: true, purchased: false };
+            }
+        } else {
+            this.addLog('購入をキャンセルした。');
+            this.state.pendingPurchase = null;
+            return { success: true, purchased: false };
+        }
+    }
+
+    /**
+     * 売却を確定
+     */
+    confirmSell(cardInstanceId) {
+        if (!this.state.pendingSale) return { success: false };
+        
+        const { seller, buyer } = this.state.pendingSale;
+        const sellerData = this.state[seller];
+        const buyerData = this.state[buyer];
+        
+        const cardIndex = sellerData.hand.findIndex(c => c.instanceId === cardInstanceId);
+        if (cardIndex === -1) {
+            this.state.pendingSale = null;
+            return { success: false };
+        }
+        
+        const card = sellerData.hand[cardIndex];
+        const price = card.price || 50;
+        
+        // 相手がお金を持っているかチェック
+        if (buyerData.money >= price) {
+            // お金を移動
+            buyerData.money -= price;
+            sellerData.money += price;
+            
+            // カードを移動
+            sellerData.hand.splice(cardIndex, 1);
+            buyerData.hand.push(card);
+            
+            this.addLog(`${card.name}を${price}円で売りつけた！`);
+        } else {
+            this.addLog(`相手のお金が足りない！売却失敗。`);
+        }
+        
+        this.state.pendingSale = null;
+        return { success: true };
     }
 
     /**

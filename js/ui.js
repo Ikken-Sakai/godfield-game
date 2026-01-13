@@ -162,7 +162,8 @@ class GameUI {
         const hpFillElement = this.elements[`${prefix}HpFill`];
         
         hpElement.textContent = playerData.hp;
-        const hpPercent = (playerData.hp / playerData.maxHp) * 100;
+        // HP上限なし：現在値を基準に表示
+        const hpPercent = Math.min((playerData.hp / 40) * 100, 100);
         hpFillElement.style.width = `${hpPercent}%`;
         
         // HP バーの色
@@ -178,7 +179,8 @@ class GameUI {
         const mpFillElement = this.elements[`${prefix}MpFill`];
         
         mpElement.textContent = playerData.mp;
-        const mpPercent = (playerData.mp / playerData.maxMp) * 100;
+        // MP上限なし：現在値を基準に表示
+        const mpPercent = Math.min((playerData.mp / 10) * 100, 100);
         mpFillElement.style.width = `${mpPercent}%`;
         
         // お金

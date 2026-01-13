@@ -23,7 +23,8 @@ const CARDS = [
         attack: 5,
         defense: 0,
         description: '標準的な剣。5ダメージを与える。',
-        rarity: 'common'
+        rarity: 'common',
+        price: 50
     },
     {
         id: 'axe',
@@ -33,7 +34,8 @@ const CARDS = [
         attack: 7,
         defense: 0,
         description: '重い斧。7ダメージを与える。',
-        rarity: 'common'
+        rarity: 'common',
+        price: 70
     },
     {
         id: 'spear',
@@ -43,7 +45,8 @@ const CARDS = [
         attack: 4,
         defense: 0,
         description: 'リーチの長い槍。4ダメージを与える。',
-        rarity: 'common'
+        rarity: 'common',
+        price: 40
     },
     {
         id: 'dagger',
@@ -352,16 +355,30 @@ const CARDS = [
         rarity: 'rare'
     },
     {
-        id: 'steal',
-        name: '盗み',
+        id: 'buy',
+        name: '買い物',
         type: CardType.ACTION,
-        icon: '🤏',
+        icon: '🛒',
         attack: 0,
         defense: 0,
-        mpCost: 3,
-        special: 'steal',
-        description: '相手のカードを1枚奪う。[MP3]',
-        rarity: 'rare'
+        mpCost: 0,
+        special: 'buy',
+        description: '相手のランダムなカードを購入できる。[無料]',
+        rarity: 'rare',
+        price: 0
+    },
+    {
+        id: 'sell',
+        name: '売りつけ',
+        type: CardType.ACTION,
+        icon: '💸',
+        attack: 0,
+        defense: 0,
+        mpCost: 0,
+        special: 'sell',
+        description: '自分のカードを相手に売りつける。[無料]',
+        rarity: 'rare',
+        price: 0
     },
     {
         id: 'discard',
@@ -418,13 +435,88 @@ const RARITY_WEIGHTS = {
 function generateDeck(deckSize = 40) {
     const deck = [];
     
-    // レア度に基づいてカードを選択
+    // カードタイプ別の出現比率（攻撃/防御を高く）
+    const typeWeights = {
+        [CardType.WEAPON]: 40,  // 攻撃カード 40%
+        [CardType.ARMOR]: 30,   // 防御カード 30%
+        [CardType.MIRACLE]: 10, // 奇跡カード 10%
+        [CardType.ITEM]: 10,    // アイテムカード 10%
+        [CardType.ACTION]: 10   // アクションカード 10%
+    };
+    
     while (deck.length < deckSize) {
-        const card = getRandomCardByRarity();
+        const card = getRandomCardByType(typeWeights);
         deck.push({ ...card, instanceId: `${card.id}_${Date.now()}_${Math.random()}` });
     }
     
     return shuffleArray(deck);
+}
+
+/**
+ * カードの価格を自動計算
+ * @param {Object} card カードデータ
+ * @returns {number} 価格
+ */
+function calculateCardPrice(card) {
+    // MP消費カードは無料
+    if (card.mpCost && card.mpCost > 0) {
+        return 0;
+    }
+    
+    // 既に価格が設定されている場合はそれを使用
+    if (card.price !== undefined) {
+        return card.price;
+    }
+    
+    let price = 0;
+    
+    // 攻撃力×10
+    if (card.attack) {
+        price += card.attack * 10;
+    }
+    
+    // 防御力×8
+    if (card.defense) {
+        price += card.defense * 8;
+    }
+    
+    // 回復×5
+    if (card.heal) {
+        price += card.heal * 5;
+    }
+    
+    // 特殊効果+20
+    if (card.special) {
+        price += 20;
+    }
+    
+    // 最低価格10
+    return Math.max(price, 10);
+}
+
+/**
+ * タイプに基づいてランダムなカードを取得
+ * @param {Object} typeWeights タイプ別の重み
+ * @returns {Object} カードデータ
+ */
+function getRandomCardByType(typeWeights) {
+    const totalWeight = Object.values(typeWeights).reduce((a, b) => a + b, 0);
+    let random = Math.random() * totalWeight;
+    
+    let selectedType = CardType.WEAPON;
+    for (const [type, weight] of Object.entries(typeWeights)) {
+        random -= weight;
+        if (random <= 0) {
+            selectedType = type;
+            break;
+        }
+    }
+    
+    const cardsOfType = CARDS.filter(card => card.type === selectedType);
+    const card = cardsOfType[Math.floor(Math.random() * cardsOfType.length)];
+    
+    // 価格を計算して追加
+    return { ...card, price: calculateCardPrice(card) };
 }
 
 /**

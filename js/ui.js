@@ -218,9 +218,16 @@ class GameUI {
         
         if (faceUp) {
             div.classList.add(card.type);
+            
+            // MPコストまたは価格を表示
+            const costLabel = card.mpCost > 0 
+                ? `<span class="card-cost mp">MP${card.mpCost}</span>` 
+                : `<span class="card-cost price">💰${card.price || 0}</span>`;
+            
             div.innerHTML = `
                 <div class="card-header">
                     <span class="card-type-icon">${getTypeIcon(card.type)}</span>
+                    ${costLabel}
                 </div>
                 <div class="card-icon">${card.icon}</div>
                 <div class="card-name">${card.name}</div>

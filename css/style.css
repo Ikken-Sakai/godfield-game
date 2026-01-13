@@ -438,17 +438,18 @@ body {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--accent-gold);
-    background: rgba(255, 215, 0, 0.1);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: rgba(255, 215, 0, 0.15);
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
 }
 
 .money-label {
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
 .hp-fill.low {
@@ -566,11 +567,23 @@ body {
 }
 
 .card-cost {
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.card-cost.mp {
+    background: rgba(168, 85, 247, 0.3);
+    color: #a55eea;
+    border: 1px solid rgba(168, 85, 247, 0.5);
+}
+
+.card-cost.price {
     background: rgba(255, 215, 0, 0.2);
     color: var(--accent-gold);
-    padding: 0.1rem 0.3rem;
-    border-radius: 3px;
-    font-weight: 700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .card-type-icon {

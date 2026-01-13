@@ -609,14 +609,9 @@ body {
     transform: none !important;
 }
 
-.action-btn.attack {
-    background: linear-gradient(135deg, var(--weapon-color) 0%, #ff4757 100%);
-    color: white;
-}
-
-.action-btn.defend {
-    background: linear-gradient(135deg, var(--armor-color) 0%, #1dd1a1 100%);
-    color: white;
+.action-btn.use {
+    background: linear-gradient(135deg, var(--accent-gold) 0%, #ffaa00 100%);
+    color: #000;
 }
 
 .action-btn.end-turn {

@@ -23,8 +23,7 @@ class GameUI {
             btnVsPlayer: document.getElementById('btn-vs-player'),
             btnHowToPlay: document.getElementById('btn-how-to-play'),
             btnBackToTitle: document.getElementById('btn-back-to-title'),
-            btnAttack: document.getElementById('btn-attack'),
-            btnDefend: document.getElementById('btn-defend'),
+            btnUse: document.getElementById('btn-use'),
             btnEndTurn: document.getElementById('btn-end-turn'),
             btnRematch: document.getElementById('btn-rematch'),
             btnToTitle: document.getElementById('btn-to-title'),
@@ -72,7 +71,7 @@ class GameUI {
         this.elements.btnBackToTitle.addEventListener('click', () => this.showScreen('title'));
         
         // ゲーム画面
-        this.elements.btnAttack.addEventListener('click', () => this.performAttack());
+        this.elements.btnUse.addEventListener('click', () => this.useSelectedCard());
         this.elements.btnEndTurn.addEventListener('click', () => this.endTurn());
         this.elements.btnNoDefend.addEventListener('click', () => this.skipDefense());
         
@@ -239,22 +238,34 @@ class GameUI {
         const isPlayerTurn = this.game.isPlayerTurn;
         const hasSelectedCard = this.game.selectedCard !== null;
         
-        // 攻撃ボタン：武器・奇跡・アイテム（攻撃系）が選択されている場合
+        // 使用ボタン：カードが選択されている場合に有効
+        this.elements.btnUse.disabled = !isPlayerTurn || !hasSelectedCard;
+        
+        // 選択されたカードに応じてボタンテキストを変更
         if (hasSelectedCard) {
             const card = this.game.selectedCard;
-            const canAttack = card.type === CardType.WEAPON || 
-                             card.attack > 0 ||
-                             card.type === CardType.MIRACLE && card.attack;
-            this.elements.btnAttack.disabled = !isPlayerTurn || !canAttack;
+            let btnText = '🎴 使用';
+            if (card.type === CardType.WEAPON || card.attack > 0) {
+                btnText = '⚔️ 攻撃';
+            } else if (card.type === CardType.ARMOR) {
+                btnText = '🛡️ 装備';
+            } else if (card.type === CardType.ITEM) {
+                btnText = '💊 使用';
+            } else if (card.type === CardType.MIRACLE) {
+                btnText = '✨ 発動';
+            } else if (card.type === CardType.ACTION) {
+                btnText = '⚡ 発動';
+            }
+            this.elements.btnUse.querySelector('span').textContent = btnText;
         } else {
-            this.elements.btnAttack.disabled = true;
+            this.elements.btnUse.querySelector('span').textContent = '🎴 使用';
         }
         
         // ターン終了ボタン
         this.elements.btnEndTurn.disabled = !isPlayerTurn;
     }
 
-    performAttack() {
+    useSelectedCard() {
         if (!this.game.selectedCard) return;
         
         const card = this.game.selectedCard;

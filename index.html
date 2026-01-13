@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GodField Clone - AIパワード運ゲーカードバトル</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- タイトル画面 -->
+    <div id="title-screen" class="screen active">
+        <div class="title-container">
+            <h1 class="game-title">
+                <span class="title-god">GOD</span><span class="title-field">FIELD</span>
+            </h1>
+            <p class="subtitle">〜 運命のカードバトル 〜</p>
+            <div class="menu-buttons">
+                <button id="btn-vs-cpu" class="menu-btn">
+                    <span class="btn-icon">⚔️</span>
+                    <span class="btn-text">VS CPU</span>
+                </button>
+                <button id="btn-vs-player" class="menu-btn">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-text">2人対戦</span>
+                </button>
+                <button id="btn-how-to-play" class="menu-btn secondary">
+                    <span class="btn-icon">📖</span>
+                    <span class="btn-text">遊び方</span>
+                </button>
+            </div>
+        </div>
+        <div class="floating-cards">
+            <div class="float-card card-1">🗡️</div>
+            <div class="float-card card-2">🛡️</div>
+            <div class="float-card card-3">✨</div>
+            <div class="float-card card-4">💊</div>
+        </div>
+    </div>
+
+    <!-- 遊び方画面 -->
+    <div id="how-to-play-screen" class="screen">
+        <div class="modal-content">
+            <h2>📖 遊び方</h2>
+            <div class="rules-container">
+                <div class="rule-section">
+                    <h3>🎯 目的</h3>
+                    <p>相手のHP（体力）を0にすれば勝利！</p>
+                </div>
+                <div class="rule-section">
+                    <h3>🃏 カードの種類</h3>
+                    <ul>
+                        <li><span class="card-type weapon">⚔️ 武器</span> - 攻撃してダメージを与える</li>
+                        <li><span class="card-type armor">🛡️ 防具</span> - 装備してダメージを軽減</li>
+                        <li><span class="card-type miracle">✨ 奇跡</span> - 特殊な効果を発動</li>
+                        <li><span class="card-type item">💊 アイテム</span> - HP回復など即時効果</li>
+                        <li><span class="card-type action">⚡ アクション</span> - 回避やカウンターなど</li>
+                    </ul>
+                </div>
+                <div class="rule-section">
+                    <h3>🔄 ターンの流れ</h3>
+                    <ol>
+                        <li>手札からカードを選んで使用</li>
+                        <li>攻撃された側は防御カードを使用可能</li>
+                        <li>ダメージ計算後、使った分だけカード補充</li>
+                        <li>ターン終了で相手の番へ</li>
+                    </ol>
+                </div>
+            </div>
+            <button id="btn-back-to-title" class="menu-btn">タイトルに戻る</button>
+        </div>
+    </div>
+
+    <!-- ゲーム画面 -->
+    <div id="game-screen" class="screen">
+        <!-- 相手エリア -->
+        <div class="opponent-area">
+            <div class="player-info opponent">
+                <div class="player-name">
+                    <span id="opponent-name">CPU</span>
+                    <span class="player-icon">🤖</span>
+                </div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar">
+                        <div id="opponent-hp-fill" class="hp-fill"></div>
+                    </div>
+                    <span class="hp-text"><span id="opponent-hp">40</span>/40</span>
+                </div>
+                <div class="equipment-slots">
+                    <div class="equip-slot" id="opponent-weapon" title="武器">
+                        <span class="slot-icon">⚔️</span>
+                        <span class="slot-label">なし</span>
+                    </div>
+                    <div class="equip-slot" id="opponent-armor" title="防具">
+                        <span class="slot-icon">🛡️</span>
+                        <span class="slot-label">なし</span>
+                    </div>
+                </div>
+            </div>
+            <div class="opponent-hand" id="opponent-hand">
+                <!-- 相手の手札（裏向き） -->
+            </div>
+        </div>
+
+        <!-- フィールド（中央） -->
+        <div class="field-area">
+            <div class="turn-indicator">
+                <span id="turn-text">あなたのターン</span>
+                <span id="turn-number">Turn 1</span>
+            </div>
+            <div class="field-cards" id="field-cards">
+                <!-- 使用されたカードが表示される -->
+            </div>
+            <div class="action-log" id="action-log">
+                <div class="log-entry">ゲーム開始！</div>
+            </div>
+        </div>
+
+        <!-- 自分エリア -->
+        <div class="player-area">
+            <div class="player-hand" id="player-hand">
+                <!-- 自分の手札 -->
+            </div>
+            <div class="player-info self">
+                <div class="player-name">
+                    <span class="player-icon">😎</span>
+                    <span id="player-name">あなた</span>
+                </div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar">
+                        <div id="player-hp-fill" class="hp-fill"></div>
+                    </div>
+                    <span class="hp-text"><span id="player-hp">40</span>/40</span>
+                </div>
+                <div class="equipment-slots">
+                    <div class="equip-slot" id="player-weapon" title="武器">
+                        <span class="slot-icon">⚔️</span>
+                        <span class="slot-label">なし</span>
+                    </div>
+                    <div class="equip-slot" id="player-armor" title="防具">
+                        <span class="slot-icon">🛡️</span>
+                        <span class="slot-label">なし</span>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="btn-attack" class="action-btn attack" disabled>
+                    <span>⚔️ 攻撃</span>
+                </button>
+                <button id="btn-defend" class="action-btn defend" disabled>
+                    <span>🛡️ 防御</span>
+                </button>
+                <button id="btn-end-turn" class="action-btn end-turn">
+                    <span>⏭️ ターン終了</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 防御選択モーダル -->
+        <div id="defense-modal" class="modal hidden">
+            <div class="modal-content defense-modal">
+                <h3>🛡️ 防御カードを選択</h3>
+                <p class="attack-info">攻撃: <span id="incoming-attack"></span></p>
+                <div id="defense-options" class="defense-cards">
+                    <!-- 防御可能なカード -->
+                </div>
+                <button id="btn-no-defend" class="menu-btn secondary">防御しない</button>
+            </div>
+        </div>
+
+        <!-- ゲーム終了モーダル -->
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content game-over">
+                <h2 id="game-result"></h2>
+                <p id="game-result-detail"></p>
+                <div class="game-over-buttons">
+                    <button id="btn-rematch" class="menu-btn">もう一度</button>
+                    <button id="btn-to-title" class="menu-btn secondary">タイトルへ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- スクリプト -->
+    <script src="js/cards.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
+

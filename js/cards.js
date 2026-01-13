@@ -1,0 +1,486 @@
+/**
+ * カードデータ定義
+ * GodField Clone
+ */
+
+// カードタイプ
+const CardType = {
+    WEAPON: 'weapon',
+    ARMOR: 'armor',
+    MIRACLE: 'miracle',
+    ITEM: 'item',
+    ACTION: 'action'
+};
+
+// 全カードデータ
+const CARDS = [
+    // ========== 武器 ==========
+    {
+        id: 'sword',
+        name: '鋼の剣',
+        type: CardType.WEAPON,
+        icon: '🗡️',
+        attack: 5,
+        defense: 0,
+        description: '標準的な剣。5ダメージを与える。',
+        rarity: 'common'
+    },
+    {
+        id: 'axe',
+        name: '戦斧',
+        type: CardType.WEAPON,
+        icon: '🪓',
+        attack: 7,
+        defense: 0,
+        description: '重い斧。7ダメージを与える。',
+        rarity: 'common'
+    },
+    {
+        id: 'spear',
+        name: '槍',
+        type: CardType.WEAPON,
+        icon: '🔱',
+        attack: 4,
+        defense: 0,
+        description: 'リーチの長い槍。4ダメージを与える。',
+        rarity: 'common'
+    },
+    {
+        id: 'dagger',
+        name: '短剣',
+        type: CardType.WEAPON,
+        icon: '🔪',
+        attack: 3,
+        defense: 0,
+        description: '素早い短剣。3ダメージを与える。',
+        rarity: 'common'
+    },
+    {
+        id: 'hammer',
+        name: '戦槌',
+        type: CardType.WEAPON,
+        icon: '🔨',
+        attack: 8,
+        defense: 0,
+        description: '重量級の槌。8ダメージを与える。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'bow',
+        name: '弓',
+        type: CardType.WEAPON,
+        icon: '🏹',
+        attack: 4,
+        defense: 0,
+        special: 'pierce',
+        description: '遠距離攻撃。防御を1貫通する。',
+        rarity: 'common'
+    },
+    {
+        id: 'holy_sword',
+        name: '聖剣',
+        type: CardType.WEAPON,
+        icon: '⚔️',
+        attack: 10,
+        defense: 0,
+        description: '神聖な力を宿す剣。10ダメージを与える。',
+        rarity: 'rare'
+    },
+    {
+        id: 'cursed_blade',
+        name: '呪いの刃',
+        type: CardType.WEAPON,
+        icon: '🗡️',
+        attack: 12,
+        defense: 0,
+        selfDamage: 3,
+        description: '12ダメージを与えるが、自分も3ダメージ。',
+        rarity: 'rare'
+    },
+    {
+        id: 'fire_staff',
+        name: '炎の杖',
+        type: CardType.WEAPON,
+        icon: '🔥',
+        attack: 6,
+        defense: 0,
+        special: 'burn',
+        description: '6ダメージ+次ターン2追加ダメージ。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'ice_staff',
+        name: '氷の杖',
+        type: CardType.WEAPON,
+        icon: '❄️',
+        attack: 5,
+        defense: 0,
+        special: 'freeze',
+        description: '5ダメージ+相手の次の攻撃力-2。',
+        rarity: 'uncommon'
+    },
+
+    // ========== 防具 ==========
+    {
+        id: 'shield',
+        name: '鉄の盾',
+        type: CardType.ARMOR,
+        icon: '🛡️',
+        attack: 0,
+        defense: 5,
+        description: '5ダメージを軽減する。',
+        rarity: 'common'
+    },
+    {
+        id: 'helmet',
+        name: '兜',
+        type: CardType.ARMOR,
+        icon: '⛑️',
+        attack: 0,
+        defense: 3,
+        description: '3ダメージを軽減する。',
+        rarity: 'common'
+    },
+    {
+        id: 'armor',
+        name: '鎧',
+        type: CardType.ARMOR,
+        icon: '🦺',
+        attack: 0,
+        defense: 7,
+        description: '7ダメージを軽減する。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'magic_barrier',
+        name: '魔法障壁',
+        type: CardType.ARMOR,
+        icon: '🔮',
+        attack: 0,
+        defense: 4,
+        special: 'reflect',
+        description: '4軽減+魔法ダメージを1反射。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'holy_shield',
+        name: '聖なる盾',
+        type: CardType.ARMOR,
+        icon: '✨',
+        attack: 0,
+        defense: 10,
+        description: '10ダメージを軽減する。',
+        rarity: 'rare'
+    },
+    {
+        id: 'counter_armor',
+        name: '反撃の鎧',
+        type: CardType.ARMOR,
+        icon: '🛡️',
+        attack: 0,
+        defense: 3,
+        special: 'counter',
+        description: '3軽減+攻撃者に2ダメージ。',
+        rarity: 'uncommon'
+    },
+
+    // ========== 奇跡 ==========
+    {
+        id: 'lightning',
+        name: '雷撃',
+        type: CardType.MIRACLE,
+        icon: '⚡',
+        attack: 8,
+        defense: 0,
+        special: 'unblockable',
+        description: '8ダメージ（防御不可）',
+        rarity: 'rare'
+    },
+    {
+        id: 'earthquake',
+        name: '地震',
+        type: CardType.MIRACLE,
+        icon: '🌋',
+        attack: 6,
+        defense: 0,
+        special: 'aoe',
+        description: '全員に6ダメージ（自分含む）',
+        rarity: 'rare'
+    },
+    {
+        id: 'divine_blessing',
+        name: '神の祝福',
+        type: CardType.MIRACLE,
+        icon: '👼',
+        attack: 0,
+        defense: 0,
+        heal: 15,
+        description: 'HPを15回復する。',
+        rarity: 'rare'
+    },
+    {
+        id: 'resurrection',
+        name: '復活',
+        type: CardType.MIRACLE,
+        icon: '💫',
+        attack: 0,
+        defense: 0,
+        special: 'revive',
+        description: 'HP1で復活（1回のみ有効）',
+        rarity: 'legendary'
+    },
+    {
+        id: 'time_stop',
+        name: '時間停止',
+        type: CardType.MIRACLE,
+        icon: '⏱️',
+        attack: 0,
+        defense: 0,
+        special: 'extra_turn',
+        description: '追加ターンを得る。',
+        rarity: 'legendary'
+    },
+
+    // ========== アイテム ==========
+    {
+        id: 'potion',
+        name: '回復薬',
+        type: CardType.ITEM,
+        icon: '🧪',
+        attack: 0,
+        defense: 0,
+        heal: 8,
+        description: 'HPを8回復する。',
+        rarity: 'common'
+    },
+    {
+        id: 'herb',
+        name: '薬草',
+        type: CardType.ITEM,
+        icon: '🌿',
+        attack: 0,
+        defense: 0,
+        heal: 5,
+        description: 'HPを5回復する。',
+        rarity: 'common'
+    },
+    {
+        id: 'elixir',
+        name: 'エリクサー',
+        type: CardType.ITEM,
+        icon: '✨',
+        attack: 0,
+        defense: 0,
+        heal: 20,
+        description: 'HPを20回復する。',
+        rarity: 'rare'
+    },
+    {
+        id: 'power_up',
+        name: '力の薬',
+        type: CardType.ITEM,
+        icon: '💪',
+        attack: 0,
+        defense: 0,
+        buff: { attack: 3 },
+        description: '次の攻撃力+3',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'defense_up',
+        name: '守りの薬',
+        type: CardType.ITEM,
+        icon: '🛡️',
+        attack: 0,
+        defense: 0,
+        buff: { defense: 3 },
+        description: '次の防御力+3',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'bomb',
+        name: '爆弾',
+        type: CardType.ITEM,
+        icon: '💣',
+        attack: 10,
+        defense: 0,
+        description: '10ダメージを与える。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'poison',
+        name: '毒薬',
+        type: CardType.ITEM,
+        icon: '☠️',
+        attack: 0,
+        defense: 0,
+        special: 'poison',
+        poisonDamage: 3,
+        poisonTurns: 3,
+        description: '3ターンの間、毎ターン3ダメージ。',
+        rarity: 'uncommon'
+    },
+
+    // ========== アクション ==========
+    {
+        id: 'dodge',
+        name: '回避',
+        type: CardType.ACTION,
+        icon: '💨',
+        attack: 0,
+        defense: 0,
+        special: 'dodge',
+        description: '次の攻撃を完全回避。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'counter',
+        name: 'カウンター',
+        type: CardType.ACTION,
+        icon: '↩️',
+        attack: 0,
+        defense: 0,
+        special: 'counter_attack',
+        description: '受けたダメージをそのまま返す。',
+        rarity: 'rare'
+    },
+    {
+        id: 'steal',
+        name: '盗み',
+        type: CardType.ACTION,
+        icon: '🤏',
+        attack: 0,
+        defense: 0,
+        special: 'steal',
+        description: '相手のカードを1枚奪う。',
+        rarity: 'rare'
+    },
+    {
+        id: 'discard',
+        name: '破棄',
+        type: CardType.ACTION,
+        icon: '🗑️',
+        attack: 0,
+        defense: 0,
+        special: 'discard',
+        description: '相手のカードを1枚捨てさせる。',
+        rarity: 'uncommon'
+    },
+    {
+        id: 'draw',
+        name: 'ドロー',
+        type: CardType.ACTION,
+        icon: '🃏',
+        attack: 0,
+        defense: 0,
+        special: 'draw',
+        drawCount: 2,
+        description: 'カードを2枚引く。',
+        rarity: 'common'
+    },
+    {
+        id: 'swap',
+        name: '入れ替え',
+        type: CardType.ACTION,
+        icon: '🔄',
+        attack: 0,
+        defense: 0,
+        special: 'swap_hp',
+        description: '自分と相手のHPを入れ替える。',
+        rarity: 'legendary'
+    }
+];
+
+// レア度に基づく出現率の重み
+const RARITY_WEIGHTS = {
+    common: 40,
+    uncommon: 30,
+    rare: 20,
+    legendary: 10
+};
+
+/**
+ * デッキを生成する
+ * @param {number} deckSize デッキのサイズ
+ * @returns {Array} シャッフルされたデッキ
+ */
+function generateDeck(deckSize = 40) {
+    const deck = [];
+    
+    // レア度に基づいてカードを選択
+    while (deck.length < deckSize) {
+        const card = getRandomCardByRarity();
+        deck.push({ ...card, instanceId: `${card.id}_${Date.now()}_${Math.random()}` });
+    }
+    
+    return shuffleArray(deck);
+}
+
+/**
+ * レア度に基づいてランダムなカードを取得
+ * @returns {Object} カードデータ
+ */
+function getRandomCardByRarity() {
+    const totalWeight = Object.values(RARITY_WEIGHTS).reduce((a, b) => a + b, 0);
+    let random = Math.random() * totalWeight;
+    
+    let selectedRarity = 'common';
+    for (const [rarity, weight] of Object.entries(RARITY_WEIGHTS)) {
+        random -= weight;
+        if (random <= 0) {
+            selectedRarity = rarity;
+            break;
+        }
+    }
+    
+    const cardsOfRarity = CARDS.filter(card => card.rarity === selectedRarity);
+    return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
+}
+
+/**
+ * 配列をシャッフル
+ * @param {Array} array 
+ * @returns {Array}
+ */
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+/**
+ * カードIDからカードデータを取得
+ * @param {string} cardId 
+ * @returns {Object|null}
+ */
+function getCardById(cardId) {
+    return CARDS.find(card => card.id === cardId) || null;
+}
+
+/**
+ * タイプ別のカードアイコンを取得
+ * @param {string} type 
+ * @returns {string}
+ */
+function getTypeIcon(type) {
+    const icons = {
+        [CardType.WEAPON]: '⚔️',
+        [CardType.ARMOR]: '🛡️',
+        [CardType.MIRACLE]: '✨',
+        [CardType.ITEM]: '💊',
+        [CardType.ACTION]: '⚡'
+    };
+    return icons[type] || '❓';
+}
+
+// エクスポート
+window.CardType = CardType;
+window.CARDS = CARDS;
+window.generateDeck = generateDeck;
+window.getCardById = getCardById;
+window.getTypeIcon = getTypeIcon;
+window.shuffleArray = shuffleArray;
+

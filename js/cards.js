@@ -483,28 +483,28 @@ function calculateCardPrice(card) {
     
     let price = 0;
     
-    // 攻撃力×10
+    // 攻撃力×8（初期お金30円に合わせて調整）
     if (card.attack) {
-        price += card.attack * 10;
+        price += card.attack * 8;
     }
     
-    // 防御力×8
+    // 防御力×7
     if (card.defense) {
-        price += card.defense * 8;
+        price += card.defense * 7;
     }
     
-    // 回復×5
+    // 回復×4
     if (card.heal) {
-        price += card.heal * 5;
+        price += card.heal * 4;
     }
     
-    // 特殊効果+20
+    // 特殊効果+15
     if (card.special) {
-        price += 20;
+        price += 15;
     }
     
-    // 最低価格10
-    return Math.max(price, 10);
+    // 最低価格5円
+    return Math.max(price, 5);
 }
 
 /**

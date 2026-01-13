@@ -282,10 +282,19 @@ class GameUI {
             if (result.heal > 0) {
                 this.showHealEffect('player', result.heal);
             }
+            
+            // 1ターン1アクション制：カード使用後に自動ターン終了
+            this.game.selectedCard = null;
+            this.updateUI();
+            
+            // 少し待ってからターン終了（アニメーション確認用）
+            setTimeout(() => {
+                this.endTurn();
+            }, 800);
+        } else {
+            this.game.selectedCard = null;
+            this.updateUI();
         }
-        
-        this.game.selectedCard = null;
-        this.updateUI();
     }
 
     endTurn() {

@@ -63,10 +63,73 @@
                     <h3>🔄 ターンの流れ</h3>
                     <ol>
                         <li>手札からカードを選んで使用</li>
-                        <li>攻撃された側は防御カードを使用可能</li>
+                        <li><strong>1ターン1アクション</strong>：カード使用後、自動的にターン終了</li>
                         <li>ダメージ計算後、使った分だけカード補充</li>
-                        <li>ターン終了で相手の番へ</li>
                     </ol>
+                </div>
+                <div class="rule-section">
+                    <h3>🎴 全カード一覧</h3>
+                    <div class="card-list">
+                        <details>
+                            <summary><strong>⚔️ 武器カード (10種)</strong></summary>
+                            <ul>
+                                <li>🗡️ <strong>短剣</strong> - 攻撃力3</li>
+                                <li>🔱 <strong>槍</strong> - 攻撃力4</li>
+                                <li>🏹 <strong>弓</strong> - 攻撃力4（防御1貫通）</li>
+                                <li>🗡️ <strong>鋼の剣</strong> - 攻撃力5</li>
+                                <li>❄️ <strong>氷の杖</strong> - 攻撃力5（相手次攻撃-2）</li>
+                                <li>🔥 <strong>炎の杖</strong> - 攻撃力6（次ターン追加2ダメージ）</li>
+                                <li>🪓 <strong>戦斧</strong> - 攻撃力7</li>
+                                <li>🔨 <strong>戦槌</strong> - 攻撃力8</li>
+                                <li>⚔️ <strong>聖剣</strong> - 攻撃力10</li>
+                                <li>🗡️ <strong>呪いの刃</strong> - 攻撃力12（自分に3ダメージ）</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><strong>🛡️ 防具カード (6種)</strong></summary>
+                            <ul>
+                                <li>⛑️ <strong>兜</strong> - 防御力3</li>
+                                <li>🔮 <strong>魔法障壁</strong> - 防御力4（魔法ダメージ1反射）</li>
+                                <li>🛡️ <strong>鉄の盾</strong> - 防御力5</li>
+                                <li>🛡️ <strong>反撃の鎧</strong> - 防御力3（攻撃者に2ダメージ）</li>
+                                <li>🦺 <strong>鎧</strong> - 防御力7</li>
+                                <li>✨ <strong>聖なる盾</strong> - 防御力10</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><strong>✨ 奇跡カード (5種)</strong></summary>
+                            <ul>
+                                <li>👼 <strong>神の祝福</strong> - HP15回復</li>
+                                <li>🌋 <strong>地震</strong> - 全員に6ダメージ</li>
+                                <li>⚡ <strong>雷撃</strong> - 8ダメージ（防御不可）</li>
+                                <li>💫 <strong>復活</strong> - HP1で復活（1回のみ）</li>
+                                <li>⏱️ <strong>時間停止</strong> - 追加ターン獲得</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><strong>💊 アイテムカード (7種)</strong></summary>
+                            <ul>
+                                <li>🌿 <strong>薬草</strong> - HP5回復</li>
+                                <li>🧪 <strong>回復薬</strong> - HP8回復</li>
+                                <li>💣 <strong>爆弾</strong> - 10ダメージ</li>
+                                <li>✨ <strong>エリクサー</strong> - HP20回復</li>
+                                <li>💪 <strong>力の薬</strong> - 次攻撃力+3</li>
+                                <li>🛡️ <strong>守りの薬</strong> - 次防御力+3</li>
+                                <li>☠️ <strong>毒薬</strong> - 3ターン毎ターン3ダメージ</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary><strong>⚡ アクションカード (6種)</strong></summary>
+                            <ul>
+                                <li>🃏 <strong>ドロー</strong> - カード2枚引く</li>
+                                <li>💨 <strong>回避</strong> - 次攻撃を完全回避</li>
+                                <li>↩️ <strong>カウンター</strong> - 受けたダメージを返す</li>
+                                <li>🤏 <strong>盗み</strong> - 相手のカード1枚奪う</li>
+                                <li>🗑️ <strong>破棄</strong> - 相手のカード1枚捨てさせる</li>
+                                <li>🔄 <strong>入れ替え</strong> - 自分と相手のHPを入れ替え</li>
+                            </ul>
+                        </details>
+                    </div>
                 </div>
             </div>
             <button id="btn-back-to-title" class="menu-btn">タイトルに戻る</button>
@@ -150,7 +213,7 @@
                     <span>🎴 使用</span>
                 </button>
                 <button id="btn-end-turn" class="action-btn end-turn">
-                    <span>⏭️ ターン終了</span>
+                    <span>⏭️ パス</span>
                 </button>
             </div>
         </div>

@@ -28,6 +28,7 @@ class GameUI {
             btnRematch: document.getElementById('btn-rematch'),
             btnToTitle: document.getElementById('btn-to-title'),
             btnNoDefend: document.getElementById('btn-no-defend'),
+            btnHome: document.getElementById('btn-home'),
             
             // プレイヤー情報
             playerName: document.getElementById('player-name'),
@@ -78,6 +79,11 @@ class GameUI {
         // ゲーム終了
         this.elements.btnRematch.addEventListener('click', () => this.startGame(this.game.gameMode));
         this.elements.btnToTitle.addEventListener('click', () => this.showScreen('title'));
+        this.elements.btnHome.addEventListener('click', () => {
+            if (confirm('ゲームを終了してタイトルに戻りますか？')) {
+                this.showScreen('title');
+            }
+        });
     }
 
     showScreen(screen) {
@@ -261,8 +267,13 @@ class GameUI {
             this.elements.btnUse.querySelector('span').textContent = '🎴 使用';
         }
         
-        // ターン終了ボタン
-        this.elements.btnEndTurn.disabled = !isPlayerTurn;
+        // パスボタン：攻撃手段がない場合のみ有効
+        const hasAttackCard = state && state.player.hand.some(card => 
+            card.type === CardType.WEAPON || 
+            card.attack > 0 || 
+            (card.type === CardType.MIRACLE && card.attack)
+        );
+        this.elements.btnEndTurn.disabled = !isPlayerTurn || hasAttackCard;
     }
 
     useSelectedCard() {
@@ -274,6 +285,18 @@ class GameUI {
         if (result.success) {
             // アニメーション
             this.showCardPlay(card);
+            
+            // 防御フェーズが必要な場合
+            if (result.needDefense) {
+                this.game.selectedCard = null;
+                this.updateUI();
+                
+                // 防御選択モーダルを表示
+                setTimeout(() => {
+                    this.showDefenseModal(result.damage);
+                }, 500);
+                return;
+            }
             
             // ダメージエフェクト
             if (result.damage > 0) {
@@ -298,9 +321,17 @@ class GameUI {
     }
 
     endTurn() {
+        // パス時はカードを1枚ドロー
+        this.game.drawCards('player', 1);
+        this.addLogEntry('パス：カードを1枚ドロー');
+        
         this.game.selectedCard = null;
-        this.game.endTurn();
-        this.updateUI();
+        
+        // 少し待ってからターン終了
+        setTimeout(() => {
+            this.game.endTurn();
+            this.updateUI();
+        }, 500);
     }
 
     showCardPlay(card) {
@@ -391,10 +422,70 @@ class GameUI {
         this.elements.actionLog.innerHTML = '';
     }
 
-    skipDefense() {
+    showDefenseModal(incomingDamage) {
+        const state = this.game.getState();
+        const defenseCards = state.player.hand.filter(c => c.type === CardType.ARMOR);
+        
+        if (defenseCards.length === 0) {
+            // 防御カードがない場合はスキップ
+            this.skipDefense();
+            return;
+        }
+        
+        // 攻撃情報を表示
+        this.elements.incomingAttack.textContent = `${incomingDamage}ダメージ`;
+        
+        // 防御カード選択肢を表示
+        this.elements.defenseOptions.innerHTML = '';
+        defenseCards.forEach(card => {
+            const cardElement = this.createCardElement(card, true);
+            cardElement.addEventListener('click', () => this.selectDefenseCard(card));
+            this.elements.defenseOptions.appendChild(cardElement);
+        });
+        
+        this.elements.defenseModal.classList.remove('hidden');
+    }
+
+    selectDefenseCard(card) {
+        // 防御カードを使用
+        const result = this.game.resolveAttack(card);
+        
         this.elements.defenseModal.classList.add('hidden');
-        // ダメージ処理
-        this.updateUI();
+        
+        if (result.success) {
+            // ダメージエフェクト
+            if (result.damage > 0) {
+                this.showDamageEffect('player', result.damage);
+            }
+            
+            this.updateUI();
+            
+            // 少し待ってからターン終了
+            setTimeout(() => {
+                this.endTurn();
+            }, 800);
+        }
+    }
+
+    skipDefense() {
+        // 防御しない
+        const result = this.game.resolveAttack(null);
+        
+        this.elements.defenseModal.classList.add('hidden');
+        
+        if (result.success) {
+            // ダメージエフェクト
+            if (result.damage > 0) {
+                this.showDamageEffect('player', result.damage);
+            }
+            
+            this.updateUI();
+            
+            // 少し待ってからターン終了
+            setTimeout(() => {
+                this.endTurn();
+            }, 800);
+        }
     }
 
     showGameOver(result) {

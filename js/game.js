@@ -158,11 +158,57 @@ class Game {
             attackerData.buffs = attackerData.buffs.filter(b => b.type !== 'attack');
         }
 
-        // 防具チェック
+        // 攻撃情報を保存（防御フェーズで使用）
+        this.state.pendingAttack = {
+            attacker: attacker,
+            defender: defender,
+            card: card,
+            damage: damage,
+            originalDamage: damage
+        };
+
+        // 防御カードがある場合は防御フェーズへ
+        const defenderHasArmor = defenderData.hand.some(c => c.type === CardType.ARMOR);
+        if (defenderHasArmor && defender === 'player') {
+            // プレイヤーが防御側の場合、防御選択を待つ
+            return { success: true, needDefense: true, damage: damage };
+        } else {
+            // CPUまたは防御カードがない場合、そのまま処理
+            return this.resolveAttack(null);
+        }
+    }
+
+    /**
+     * 攻撃を解決（防御後）
+     */
+    resolveAttack(defenseCard) {
+        const attack = this.state.pendingAttack;
+        if (!attack) return { success: false };
+
+        const attackerData = this.state[attack.attacker];
+        const defenderData = this.state[attack.defender];
+        let damage = attack.damage;
         let blocked = 0;
-        if (defenderData.equipment.armor) {
-            blocked = Math.min(defenderData.equipment.armor.defense, damage);
+
+        // 防御カード使用
+        if (defenseCard) {
+            blocked = Math.min(defenseCard.defense, damage);
             damage -= blocked;
+            
+            // 手札から削除
+            const cardIndex = defenderData.hand.findIndex(c => c.instanceId === defenseCard.instanceId);
+            if (cardIndex !== -1) {
+                defenderData.hand.splice(cardIndex, 1);
+                this.state.discardPile.push(defenseCard);
+                this.drawCards(attack.defender, 1);
+            }
+        }
+
+        // 装備している防具もチェック
+        if (defenderData.equipment.armor) {
+            const armorBlock = Math.min(defenderData.equipment.armor.defense, damage);
+            blocked += armorBlock;
+            damage -= armorBlock;
             
             // 防具を消費（使い捨て）
             this.state.discardPile.push(defenderData.equipment.armor);
@@ -173,19 +219,22 @@ class Game {
         defenderData.hp = Math.max(0, defenderData.hp - damage);
         
         // 自傷ダメージ
-        if (card.selfDamage) {
-            attackerData.hp = Math.max(0, attackerData.hp - card.selfDamage);
-            this.addLog(`${card.name}の反動で${card.selfDamage}ダメージ！`);
+        if (attack.card.selfDamage) {
+            attackerData.hp = Math.max(0, attackerData.hp - attack.card.selfDamage);
+            this.addLog(`${attack.card.name}の反動で${attack.card.selfDamage}ダメージ！`);
         }
 
-        const defenderName = defender === 'player' ? 'あなた' : 'CPU';
-        let message = `${card.name}で攻撃！`;
+        const defenderName = attack.defender === 'player' ? 'あなた' : 'CPU';
+        let message = `${attack.card.name}で攻撃！`;
         if (blocked > 0) {
             message += ` ${blocked}ダメージを防御、`;
         }
         message += ` ${damage}ダメージ！`;
         
         this.addLog(message);
+
+        // 攻撃情報をクリア
+        this.state.pendingAttack = null;
 
         return { success: true, message, damage, blocked };
     }

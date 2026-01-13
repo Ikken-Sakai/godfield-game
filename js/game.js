@@ -34,6 +34,9 @@ class Game {
                 name: 'あなた',
                 hp: 40,
                 maxHp: 40,
+                mp: 10,
+                maxMp: 10,
+                money: 100,
                 hand: [],
                 equipment: { weapon: null, armor: null },
                 buffs: [],
@@ -43,6 +46,9 @@ class Game {
                 name: 'CPU',
                 hp: 40,
                 maxHp: 40,
+                mp: 10,
+                maxMp: 10,
+                money: 100,
                 hand: [],
                 equipment: { weapon: null, armor: null },
                 buffs: [],
@@ -92,6 +98,42 @@ class Game {
                 targetPlayer.hand.push(this.state.deck.pop());
             }
         }
+        
+        // カードを自動ソート
+        this.sortHand(target);
+    }
+
+    /**
+     * 手札をカードタイプ順にソート
+     * 順序: 攻撃 → 防御 → 奇跡 → アイテム → アクション
+     */
+    sortHand(target) {
+        const targetPlayer = this.state[target];
+        const typeOrder = {
+            [CardType.WEAPON]: 1,
+            [CardType.ARMOR]: 2,
+            [CardType.MIRACLE]: 3,
+            [CardType.ITEM]: 4,
+            [CardType.ACTION]: 5
+        };
+        
+        targetPlayer.hand.sort((a, b) => {
+            const orderA = typeOrder[a.type] || 99;
+            const orderB = typeOrder[b.type] || 99;
+            
+            if (orderA !== orderB) {
+                return orderA - orderB;
+            }
+            
+            // 同じタイプの場合は攻撃力/防御力で降順ソート
+            if (a.type === CardType.WEAPON) {
+                return (b.attack || 0) - (a.attack || 0);
+            } else if (a.type === CardType.ARMOR) {
+                return (b.defense || 0) - (a.defense || 0);
+            }
+            
+            return 0;
+        });
     }
 
     /**
@@ -104,6 +146,12 @@ class Game {
         if (cardIndex === -1) return { success: false, message: 'カードが見つかりません' };
         
         const card = playerHand[cardIndex];
+        
+        // MPチェック
+        if (card.mpCost && this.state.player.mp < card.mpCost) {
+            return { success: false, message: 'MPが足りません！' };
+        }
+        
         let result = { success: true, message: '', damage: 0, heal: 0 };
 
         switch (card.type) {
@@ -128,12 +176,33 @@ class Game {
         }
 
         if (result.success) {
+            // MP消費
+            if (card.mpCost) {
+                this.state.player.mp -= card.mpCost;
+                this.addLog(`MP${card.mpCost}消費`);
+            }
+            
             // カードを手札から削除
             playerHand.splice(cardIndex, 1);
             this.state.discardPile.push(card);
             
-            // カード補充
-            this.drawCards('player', 1);
+            // カード補充条件
+            // 1. MP消費カード（奇跡/アクション）を使用した場合、1枚ドロー
+            // 2. 攻撃カードが0枚になった場合、3枚ドロー
+            if (card.mpCost) {
+                this.drawCards('player', 1);
+                this.addLog('カードを1枚ドロー');
+            } else {
+                // 攻撃カード数をチェック
+                const attackCardCount = playerHand.filter(c => 
+                    c.type === CardType.WEAPON || (c.attack && c.attack > 0)
+                ).length;
+                
+                if (attackCardCount === 0) {
+                    this.drawCards('player', 3);
+                    this.addLog('攻撃カードがなくなったので3枚ドロー！');
+                }
+            }
             
             // 勝敗チェック
             this.checkGameEnd();
@@ -195,12 +264,11 @@ class Game {
             blocked = Math.min(defenseCard.defense, damage);
             damage -= blocked;
             
-            // 手札から削除
+            // 手札から削除（ドローなし）
             const cardIndex = defenderData.hand.findIndex(c => c.instanceId === defenseCard.instanceId);
             if (cardIndex !== -1) {
                 defenderData.hand.splice(cardIndex, 1);
                 this.state.discardPile.push(defenseCard);
-                this.drawCards(attack.defender, 1);
             }
         }
 
@@ -431,6 +499,10 @@ class Game {
         this.state.turn++;
         this.isPlayerTurn = !this.isPlayerTurn;
         this.state.currentPlayer = this.isPlayerTurn ? 'player' : 'opponent';
+        
+        // ターン開始時にMP回復（2ポイント）
+        const currentPlayerData = this.state[this.state.currentPlayer];
+        currentPlayerData.mp = Math.min(currentPlayerData.mp + 2, currentPlayerData.maxMp);
         
         this.addLog(`--- ターン ${this.state.turn} ---`);
         this.addLog(`${this.isPlayerTurn ? 'あなた' : 'CPU'}のターン`);

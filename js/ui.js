@@ -34,6 +34,9 @@ class GameUI {
             playerName: document.getElementById('player-name'),
             playerHp: document.getElementById('player-hp'),
             playerHpFill: document.getElementById('player-hp-fill'),
+            playerMp: document.getElementById('player-mp'),
+            playerMpFill: document.getElementById('player-mp-fill'),
+            playerMoney: document.getElementById('player-money'),
             playerHand: document.getElementById('player-hand'),
             playerWeapon: document.getElementById('player-weapon'),
             playerArmor: document.getElementById('player-armor'),
@@ -42,6 +45,9 @@ class GameUI {
             opponentName: document.getElementById('opponent-name'),
             opponentHp: document.getElementById('opponent-hp'),
             opponentHpFill: document.getElementById('opponent-hp-fill'),
+            opponentMp: document.getElementById('opponent-mp'),
+            opponentMpFill: document.getElementById('opponent-mp-fill'),
+            opponentMoney: document.getElementById('opponent-money'),
             opponentHand: document.getElementById('opponent-hand'),
             opponentWeapon: document.getElementById('opponent-weapon'),
             opponentArmor: document.getElementById('opponent-armor'),
@@ -166,6 +172,18 @@ class GameUI {
         } else if (hpPercent <= 50) {
             hpFillElement.classList.add('low');
         }
+        
+        // MP
+        const mpElement = this.elements[`${prefix}Mp`];
+        const mpFillElement = this.elements[`${prefix}MpFill`];
+        
+        mpElement.textContent = playerData.mp;
+        const mpPercent = (playerData.mp / playerData.maxMp) * 100;
+        mpFillElement.style.width = `${mpPercent}%`;
+        
+        // お金
+        const moneyElement = this.elements[`${prefix}Money`];
+        moneyElement.textContent = playerData.money;
         
         // 装備
         const armorSlot = this.elements[`${prefix}Armor`];

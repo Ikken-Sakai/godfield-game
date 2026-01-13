@@ -192,8 +192,9 @@ const CARDS = [
         icon: '⚡',
         attack: 8,
         defense: 0,
+        mpCost: 4,
         special: 'unblockable',
-        description: '8ダメージ（防御不可）',
+        description: '8ダメージ（防御不可）[MP4]',
         rarity: 'rare'
     },
     {
@@ -203,8 +204,9 @@ const CARDS = [
         icon: '🌋',
         attack: 6,
         defense: 0,
+        mpCost: 5,
         special: 'aoe',
-        description: '全員に6ダメージ（自分含む）',
+        description: '全員に6ダメージ（自分含む）[MP5]',
         rarity: 'rare'
     },
     {
@@ -214,8 +216,9 @@ const CARDS = [
         icon: '👼',
         attack: 0,
         defense: 0,
+        mpCost: 3,
         heal: 15,
-        description: 'HPを15回復する。',
+        description: 'HPを15回復する。[MP3]',
         rarity: 'rare'
     },
     {
@@ -225,8 +228,9 @@ const CARDS = [
         icon: '💫',
         attack: 0,
         defense: 0,
+        mpCost: 8,
         special: 'revive',
-        description: 'HP1で復活（1回のみ有効）',
+        description: 'HP1で復活（1回のみ有効）[MP8]',
         rarity: 'legendary'
     },
     {
@@ -236,8 +240,9 @@ const CARDS = [
         icon: '⏱️',
         attack: 0,
         defense: 0,
+        mpCost: 6,
         special: 'extra_turn',
-        description: '追加ターンを得る。',
+        description: '追加ターンを得る。[MP6]',
         rarity: 'legendary'
     },
 
@@ -329,8 +334,9 @@ const CARDS = [
         icon: '💨',
         attack: 0,
         defense: 0,
+        mpCost: 2,
         special: 'dodge',
-        description: '次の攻撃を完全回避。',
+        description: '次の攻撃を完全回避。[MP2]',
         rarity: 'uncommon'
     },
     {
@@ -340,8 +346,9 @@ const CARDS = [
         icon: '↩️',
         attack: 0,
         defense: 0,
+        mpCost: 3,
         special: 'counter_attack',
-        description: '受けたダメージをそのまま返す。',
+        description: '受けたダメージをそのまま返す。[MP3]',
         rarity: 'rare'
     },
     {
@@ -351,8 +358,9 @@ const CARDS = [
         icon: '🤏',
         attack: 0,
         defense: 0,
+        mpCost: 3,
         special: 'steal',
-        description: '相手のカードを1枚奪う。',
+        description: '相手のカードを1枚奪う。[MP3]',
         rarity: 'rare'
     },
     {
@@ -362,8 +370,9 @@ const CARDS = [
         icon: '🗑️',
         attack: 0,
         defense: 0,
+        mpCost: 2,
         special: 'discard',
-        description: '相手のカードを1枚捨てさせる。',
+        description: '相手のカードを1枚捨てさせる。[MP2]',
         rarity: 'uncommon'
     },
     {
@@ -373,9 +382,10 @@ const CARDS = [
         icon: '🃏',
         attack: 0,
         defense: 0,
+        mpCost: 1,
         special: 'draw',
         drawCount: 2,
-        description: 'カードを2枚引く。',
+        description: 'カードを2枚引く。[MP1]',
         rarity: 'common'
     },
     {
@@ -385,8 +395,9 @@ const CARDS = [
         icon: '🔄',
         attack: 0,
         defense: 0,
+        mpCost: 5,
         special: 'swap_hp',
-        description: '自分と相手のHPを入れ替える。',
+        description: '自分と相手のHPを入れ替える。[MP5]',
         rarity: 'legendary'
     }
 ];

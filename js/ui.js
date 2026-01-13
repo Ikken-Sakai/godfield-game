@@ -310,6 +310,9 @@ class GameUI {
         const result = this.game.useCard(card.instanceId);
         
         if (result.success) {
+            // カード効果を表示
+            this.showCardEffect(card, result);
+            
             // アニメーション
             this.showCardPlay(card);
             
@@ -340,11 +343,39 @@ class GameUI {
             // 少し待ってからターン終了（アニメーション確認用）
             setTimeout(() => {
                 this.endTurn();
-            }, 800);
+            }, 1200);
         } else {
             this.game.selectedCard = null;
             this.updateUI();
         }
+    }
+
+    showCardEffect(card, result) {
+        const display = document.getElementById('card-effect-display');
+        if (!display) return;
+        
+        let effectText = `${card.icon} ${card.name}`;
+        
+        if (result.damage > 0) {
+            effectText += `\n⚔️ ${result.damage}ダメージ！`;
+        }
+        if (result.heal > 0) {
+            effectText += `\n💚 HP+${result.heal}回復！`;
+        }
+        if (card.mpCost > 0) {
+            effectText += `\n✨ MP-${card.mpCost}`;
+        }
+        if (result.message) {
+            effectText += `\n${result.message}`;
+        }
+        
+        display.textContent = effectText;
+        display.classList.remove('hidden');
+        
+        // 1.5秒後に非表示
+        setTimeout(() => {
+            display.classList.add('hidden');
+        }, 1500);
     }
 
     endTurn() {

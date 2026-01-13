@@ -34,7 +34,7 @@ class Game {
                 name: 'あなた',
                 hp: 40,
                 mp: 10,
-                money: 100,
+                money: 30,
                 hand: [],
                 equipment: { weapon: null, armor: null },
                 buffs: [],
@@ -44,7 +44,7 @@ class Game {
                 name: 'CPU',
                 hp: 40,
                 mp: 10,
-                money: 100,
+                money: 30,
                 hand: [],
                 equipment: { weapon: null, armor: null },
                 buffs: [],
@@ -77,8 +77,17 @@ class Game {
      */
     drawCards(target, count) {
         const targetPlayer = this.state[target];
+        const MAX_HAND_SIZE = 15; // 手札上限
         
         for (let i = 0; i < count; i++) {
+            // 手札上限チェック
+            if (targetPlayer.hand.length >= MAX_HAND_SIZE) {
+                if (target === 'player') {
+                    this.addLog(`手札が上限(${MAX_HAND_SIZE}枚)に達しています。`);
+                }
+                break;
+            }
+            
             if (this.state.deck.length === 0) {
                 // デッキが空の場合、捨て札をシャッフルして戻す
                 if (this.state.discardPile.length > 0) {
@@ -90,9 +99,7 @@ class Game {
                 }
             }
             
-            if (targetPlayer.hand.length < 9) {
-                targetPlayer.hand.push(this.state.deck.pop());
-            }
+            targetPlayer.hand.push(this.state.deck.pop());
         }
         
         // カードを自動ソート
@@ -490,6 +497,16 @@ class Game {
             }
         }
 
+        if (card.special === 'exchange') {
+            // 両替カード：HP/MP/お金を相互変換
+            // UI側でモーダル表示
+            this.state.pendingExchange = {
+                user: user
+            };
+            
+            return { success: true, needExchangeSelect: true };
+        }
+
         if (card.special === 'steal') {
             const target = user === 'player' ? 'opponent' : 'player';
             const targetHand = this.state[target].hand;
@@ -782,6 +799,38 @@ class Game {
         }
         
         this.state.pendingSale = null;
+        return { success: true };
+    }
+
+    /**
+     * 両替を確定
+     * @param {string} from 変換元（'hp', 'mp', 'money'）
+     * @param {string} to 変換先（'hp', 'mp', 'money'）
+     * @param {number} amount 変換量
+     */
+    confirmExchange(from, to, amount) {
+        if (!this.state.pendingExchange) return { success: false };
+        
+        const { user } = this.state.pendingExchange;
+        const userData = this.state[user];
+        
+        // 変換元の値チェック
+        if (userData[from] < amount) {
+            this.addLog(`${from.toUpperCase()}が足りません！`);
+            this.state.pendingExchange = null;
+            return { success: false };
+        }
+        
+        // 変換実行
+        userData[from] -= amount;
+        userData[to] += amount;
+        
+        const fromLabel = from === 'hp' ? 'HP' : from === 'mp' ? 'MP' : 'お金';
+        const toLabel = to === 'hp' ? 'HP' : to === 'mp' ? 'MP' : 'お金';
+        
+        this.addLog(`両替：${fromLabel}${amount} → ${toLabel}${amount}`);
+        
+        this.state.pendingExchange = null;
         return { success: true };
     }
 

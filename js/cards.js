@@ -381,6 +381,19 @@ const CARDS = [
         price: 0
     },
     {
+        id: 'exchange',
+        name: '両替',
+        type: CardType.ACTION,
+        icon: '💱',
+        attack: 0,
+        defense: 0,
+        mpCost: 0,
+        special: 'exchange',
+        description: 'HP/MP/お金を自由に両替する。[無料]',
+        rarity: 'uncommon',
+        price: 0
+    },
+    {
         id: 'discard',
         name: '破棄',
         type: CardType.ACTION,

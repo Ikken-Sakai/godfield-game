@@ -311,11 +311,10 @@ class Game {
         let message = '';
 
         if (card.heal) {
-            const healAmount = Math.min(card.heal, userData.maxHp - userData.hp);
-            userData.hp += healAmount;
-            message = `${card.name}を使用！HPが${healAmount}回復！`;
+            userData.hp += card.heal;
+            message = `${card.name}を使用！HPが${card.heal}回復！`;
             this.addLog(message);
-            return { success: true, message, heal: healAmount };
+            return { success: true, message, heal: card.heal };
         }
 
         if (card.buff) {
@@ -365,11 +364,10 @@ class Game {
         let message = '';
 
         if (card.heal) {
-            const healAmount = Math.min(card.heal, userData.maxHp - userData.hp);
-            userData.hp += healAmount;
-            message = `${card.name}！HPが${healAmount}回復！`;
+            userData.hp += card.heal;
+            message = `${card.name}！HPが${card.heal}回復！`;
             this.addLog(message);
-            return { success: true, message, heal: healAmount };
+            return { success: true, message, heal: card.heal };
         }
 
         if (card.attack) {
